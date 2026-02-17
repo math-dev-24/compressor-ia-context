@@ -1,7 +1,7 @@
+use super::{Tool, footer};
 use crate::compress::Compressor;
 use crate::compress::generic::GenericCompressor;
 use crate::runner;
-use super::{Tool, footer};
 
 /// Generic fallback tool: execute any command, truncate output.
 pub struct GenericTool {

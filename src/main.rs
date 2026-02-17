@@ -24,9 +24,10 @@ fn main() {
             let tool: Box<dyn Tool> = match command {
                 Commands::Git { args } => Box::new(tools::git::GitTool::new(args)),
                 Commands::Cargo { args } => Box::new(tools::cargo::CargoTool::new(args)),
-                Commands::Ls { path } => {
-                    Box::new(tools::fs::FsTool::new(path.unwrap_or_else(|| ".".into()), &cfg))
-                }
+                Commands::Ls { path } => Box::new(tools::fs::FsTool::new(
+                    path.unwrap_or_else(|| ".".into()),
+                    &cfg,
+                )),
                 Commands::Grep { pattern, path, rg } => Box::new(tools::grep::GrepTool::new(
                     pattern,
                     path.unwrap_or_else(|| ".".into()),

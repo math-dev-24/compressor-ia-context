@@ -1,7 +1,7 @@
+use super::{Tool, footer};
 use crate::compress::Compressor;
 use crate::compress::git::GitCompressor;
 use crate::runner;
-use super::{Tool, footer};
 
 /// Git tool: builds git commands with smart defaults, compresses output.
 pub struct GitTool {
@@ -25,16 +25,25 @@ impl GitTool {
 
         match sub.as_str() {
             "log" => {
-                if !rest.iter().any(|a| a.starts_with("--format") || a.starts_with("--pretty")) {
+                if !rest
+                    .iter()
+                    .any(|a| a.starts_with("--format") || a.starts_with("--pretty"))
+                {
                     out.push("--oneline".into());
                 }
-                if !rest.iter().any(|a| a.starts_with("-n") || a.starts_with("--max-count")) {
+                if !rest
+                    .iter()
+                    .any(|a| a.starts_with("-n") || a.starts_with("--max-count"))
+                {
                     out.push("-n30".into());
                 }
                 out.extend(rest.iter().cloned());
             }
             "diff" => {
-                if !rest.iter().any(|a| a == "--stat" || a == "--name-only" || a == "--cached") {
+                if !rest
+                    .iter()
+                    .any(|a| a == "--stat" || a == "--name-only" || a == "--cached")
+                {
                     out.push("--stat".into());
                 }
                 out.extend(rest.iter().cloned());

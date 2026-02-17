@@ -1,10 +1,10 @@
-pub mod git;
 pub mod cargo;
+pub mod docker;
+pub mod fs;
+pub mod generic;
+pub mod git;
 pub mod grep;
 pub mod python;
-pub mod fs;
-pub mod docker;
-pub mod generic;
 
 use crate::runner::RunResult;
 

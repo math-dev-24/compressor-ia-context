@@ -92,7 +92,10 @@ mod tests {
 
     #[test]
     fn test_truncate_respects_max_lines() {
-        let raw = (0..200).map(|i| format!("line {i}")).collect::<Vec<_>>().join("\n");
+        let raw = (0..200)
+            .map(|i| format!("line {i}"))
+            .collect::<Vec<_>>()
+            .join("\n");
         let result = truncate(&raw);
         let lines: Vec<&str> = result.lines().collect();
         // 150 lines + 1 blank + 1 footer
@@ -129,7 +132,10 @@ mod tests {
 
     #[test]
     fn test_truncate_exact_limit_no_footer() {
-        let raw = (0..150).map(|i| format!("L{i}")).collect::<Vec<_>>().join("\n");
+        let raw = (0..150)
+            .map(|i| format!("L{i}"))
+            .collect::<Vec<_>>()
+            .join("\n");
         let result = truncate(&raw);
         assert!(!result.contains("lines total"));
     }

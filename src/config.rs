@@ -132,13 +132,19 @@ pub fn detect_project() -> Vec<ProjectType> {
     if Path::new("package.json").exists() {
         types.push(ProjectType::Node);
     }
-    if Path::new("pyproject.toml").exists() || Path::new("setup.py").exists() || Path::new("requirements.txt").exists() {
+    if Path::new("pyproject.toml").exists()
+        || Path::new("setup.py").exists()
+        || Path::new("requirements.txt").exists()
+    {
         types.push(ProjectType::Python);
     }
     if Path::new("go.mod").exists() {
         types.push(ProjectType::Go);
     }
-    if Path::new("Dockerfile").exists() || Path::new("docker-compose.yml").exists() || Path::new("compose.yml").exists() {
+    if Path::new("Dockerfile").exists()
+        || Path::new("docker-compose.yml").exists()
+        || Path::new("compose.yml").exists()
+    {
         types.push(ProjectType::Docker);
     }
     if Path::new("Makefile").exists() {

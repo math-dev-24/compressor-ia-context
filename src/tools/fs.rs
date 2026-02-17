@@ -1,7 +1,7 @@
-use std::fs;
-use std::path::Path;
 use super::Tool;
 use crate::config::Config;
+use std::fs;
+use std::path::Path;
 
 /// FS tool: compact tree listing (no external command needed).
 pub struct FsTool {
@@ -43,7 +43,8 @@ impl Tool for FsTool {
 
         if count > self.max_entries {
             lines.push(format!(
-                "… {count} entries total, showing first {}", self.max_entries
+                "… {count} entries total, showing first {}",
+                self.max_entries
             ));
         }
 

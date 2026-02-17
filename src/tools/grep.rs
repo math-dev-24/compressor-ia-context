@@ -1,7 +1,7 @@
+use super::{Tool, footer};
 use crate::compress::Compressor;
 use crate::compress::grep::GrepCompressor;
 use crate::runner;
-use super::{Tool, footer};
 
 /// Grep tool: runs grep or ripgrep, compresses grouped output.
 pub struct GrepTool {
@@ -12,7 +12,11 @@ pub struct GrepTool {
 
 impl GrepTool {
     pub fn new(pattern: String, path: String, use_rg: bool) -> Self {
-        Self { pattern, path, use_rg }
+        Self {
+            pattern,
+            path,
+            use_rg,
+        }
     }
 
     fn build_args(&self) -> (&str, Vec<String>) {

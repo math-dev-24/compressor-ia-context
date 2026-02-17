@@ -1,7 +1,7 @@
+use super::{Tool, footer};
 use crate::compress::Compressor;
 use crate::compress::python::PythonCompressor;
 use crate::runner;
-use super::{Tool, footer};
 
 /// Python/UV tool: dispatches to the right program and compresses output.
 pub struct PythonTool {
@@ -27,7 +27,10 @@ impl PythonTool {
             "pytest" | "test" => {
                 let mut args = vec!["-x".into(), "-q".into()];
                 // Don't add -q if user already passed verbosity flags
-                if rest.iter().any(|a| a == "-v" || a == "--verbose" || a == "-q") {
+                if rest
+                    .iter()
+                    .any(|a| a == "-v" || a == "--verbose" || a == "-q")
+                {
                     args = Vec::new();
                 }
                 args.extend(rest);
@@ -42,9 +45,7 @@ impl PythonTool {
                 ("ruff", args, "ruff")
             }
             // Type checking
-            "mypy" => {
-                ("mypy", rest, "mypy")
-            }
+            "mypy" => ("mypy", rest, "mypy"),
             // Package management (uv pip)
             "pip" => {
                 if let Some(pip_sub) = rest.first() {
@@ -68,9 +69,7 @@ impl PythonTool {
             "init" => ("uv", [vec!["init".into()], rest].concat(), "run"),
             "venv" => ("uv", [vec!["venv".into()], rest].concat(), "run"),
             // Fallback: run as uv subcommand
-            _ => {
-                ("uv", self.args.clone(), "run")
-            }
+            _ => ("uv", self.args.clone(), "run"),
         }
     }
 }

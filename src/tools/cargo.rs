@@ -1,7 +1,7 @@
+use super::{Tool, footer};
 use crate::compress::Compressor;
 use crate::compress::cargo::CargoCompressor;
 use crate::runner;
-use super::{Tool, footer};
 
 /// Cargo tool: runs cargo sub-commands with smart defaults, compresses output.
 pub struct CargoTool {

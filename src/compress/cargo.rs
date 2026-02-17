@@ -159,7 +159,10 @@ fn compress_run(raw: &str) -> String {
 
     for line in &lines {
         let trimmed = line.trim();
-        if trimmed.starts_with("Compiling") || trimmed.starts_with("Downloading") || trimmed.starts_with("Fresh") {
+        if trimmed.starts_with("Compiling")
+            || trimmed.starts_with("Downloading")
+            || trimmed.starts_with("Fresh")
+        {
             continue;
         }
         if trimmed.starts_with("Finished") || trimmed.starts_with("Running") {
@@ -268,7 +271,12 @@ fn compress_dep_change(sub: &str, raw: &str) -> String {
 fn compress_update(raw: &str) -> String {
     let updates: Vec<&str> = raw
         .lines()
-        .filter(|l| l.trim().starts_with("Updating") || l.trim().starts_with("Adding") || l.trim().starts_with("Removing") || l.trim().starts_with("Locking"))
+        .filter(|l| {
+            l.trim().starts_with("Updating")
+                || l.trim().starts_with("Adding")
+                || l.trim().starts_with("Removing")
+                || l.trim().starts_with("Locking")
+        })
         .collect();
 
     if updates.is_empty() {
@@ -295,7 +303,10 @@ fn compress_install(raw: &str) -> String {
 
     for line in raw.lines() {
         let trimmed = line.trim();
-        if trimmed.starts_with("Installing") || trimmed.starts_with("Installed") || trimmed.starts_with("Replacing") {
+        if trimmed.starts_with("Installing")
+            || trimmed.starts_with("Installed")
+            || trimmed.starts_with("Replacing")
+        {
             installed = Some(trimmed);
         } else if trimmed.starts_with("Finished") {
             summary = Some(trimmed);

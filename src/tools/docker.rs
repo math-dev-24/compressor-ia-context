@@ -1,7 +1,7 @@
+use super::{Tool, footer};
 use crate::compress::Compressor;
 use crate::compress::docker::DockerCompressor;
 use crate::runner;
-use super::{Tool, footer};
 
 /// Docker tool: runs docker sub-commands, compresses output.
 pub struct DockerTool {

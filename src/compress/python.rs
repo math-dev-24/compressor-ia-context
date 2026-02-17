@@ -1,5 +1,5 @@
 use super::Compressor;
-use super::truncate::{truncate, dedup_lines};
+use super::truncate::{dedup_lines, truncate};
 
 /// Pure compressor for Python ecosystem output (pytest, ruff, pip, mypy, uv).
 pub struct PythonCompressor;
@@ -33,7 +33,9 @@ fn compress_pytest(raw: &str) -> String {
 
     for line in &lines {
         // Summary lines (always keep)
-        if line.starts_with("=") && (line.contains("passed") || line.contains("failed") || line.contains("error")) {
+        if line.starts_with("=")
+            && (line.contains("passed") || line.contains("failed") || line.contains("error"))
+        {
             out.push(*line);
             continue;
         }
@@ -88,7 +90,11 @@ fn compress_ruff(raw: &str) -> String {
 
     for line in raw.lines() {
         let trimmed = line.trim();
-        if trimmed.starts_with("Found ") || trimmed.starts_with("All checks") || trimmed.starts_with("Would reformat") || trimmed.starts_with("reformatted") {
+        if trimmed.starts_with("Found ")
+            || trimmed.starts_with("All checks")
+            || trimmed.starts_with("Would reformat")
+            || trimmed.starts_with("reformatted")
+        {
             summary = Some(trimmed);
         } else if !trimmed.is_empty() && (trimmed.contains(".py:") || trimmed.contains(".pyi:")) {
             diagnostics.push(trimmed);
@@ -284,7 +290,10 @@ fn compress_uv_dep(sub: &str, raw: &str) -> String {
         let trimmed = line.trim();
         if trimmed.starts_with("Resolved") || trimmed.starts_with("Audited") {
             resolved = Some(trimmed);
-        } else if trimmed.starts_with('+') || trimmed.starts_with('-') || trimmed.starts_with("Updated") {
+        } else if trimmed.starts_with('+')
+            || trimmed.starts_with('-')
+            || trimmed.starts_with("Updated")
+        {
             changes.push(trimmed);
         }
     }
@@ -551,7 +560,8 @@ Resolved 13 packages in 0.2s
     #[test]
     fn test_trait_dispatches_pytest() {
         let c = PythonCompressor;
-        let raw = "============================== 1 passed in 0.01s ==============================\n";
+        let raw =
+            "============================== 1 passed in 0.01s ==============================\n";
         let result = c.compress(raw, Some("pytest"));
         assert!(result.contains("[pytest]"));
     }

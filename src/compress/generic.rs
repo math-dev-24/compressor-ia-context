@@ -26,7 +26,10 @@ mod tests {
     #[test]
     fn test_long_output_truncated() {
         let c = GenericCompressor;
-        let raw = (0..200).map(|i| format!("line {i}")).collect::<Vec<_>>().join("\n");
+        let raw = (0..200)
+            .map(|i| format!("line {i}"))
+            .collect::<Vec<_>>()
+            .join("\n");
         let result = c.compress(&raw, None);
         assert!(result.contains("200 lines total, showing first 150"));
     }

@@ -11,8 +11,9 @@ impl Compressor for GitCompressor {
             "diff" => compress_diff(raw),
             "log" => truncate(raw),
             "push" | "pull" | "fetch" => compress_transfer(sub.unwrap_or(""), raw),
-            "add" | "commit" | "reset" | "restore" | "rm" | "mv"
-                => compress_write_op(sub.unwrap_or(""), raw),
+            "add" | "commit" | "reset" | "restore" | "rm" | "mv" => {
+                compress_write_op(sub.unwrap_or(""), raw)
+            }
             "branch" => compress_branch(raw),
             "tag" => compress_tag(raw),
             "stash" => compress_stash(sub.unwrap_or(""), raw),
@@ -82,7 +83,11 @@ fn compress_status(raw: &str) -> String {
     out.push('\n');
 
     if !staged.is_empty() {
-        out.push_str(&format!("[staged {}] {}\n", staged.len(), staged.join(", ")));
+        out.push_str(&format!(
+            "[staged {}] {}\n",
+            staged.len(),
+            staged.join(", ")
+        ));
     }
     if !unstaged.is_empty() {
         out.push_str(&format!(
@@ -124,7 +129,10 @@ fn compress_diff(raw: &str) -> String {
             if let Some(f) = current_file.take() {
                 diff_files.push(format!("  {f}: +{adds} -{dels}"));
             }
-            current_file = line.split(' ').next_back().map(|s| s.trim_start_matches("b/").to_string());
+            current_file = line
+                .split(' ')
+                .next_back()
+                .map(|s| s.trim_start_matches("b/").to_string());
             adds = 0;
             dels = 0;
         } else if line.starts_with('+') && !line.starts_with("+++") {
@@ -188,10 +196,7 @@ fn compress_write_op(sub: &str, raw: &str) -> String {
         if raw.trim().is_empty() {
             format!("[git {sub}] ok")
         } else {
-            let first_meaningful = raw
-                .lines()
-                .find(|l| !l.trim().is_empty())
-                .unwrap_or("ok");
+            let first_meaningful = raw.lines().find(|l| !l.trim().is_empty()).unwrap_or("ok");
             format!("[git {sub}] {}", first_meaningful.trim())
         }
     } else {
@@ -201,10 +206,7 @@ fn compress_write_op(sub: &str, raw: &str) -> String {
 
 /// Compress `git branch` — list branches compactly.
 fn compress_branch(raw: &str) -> String {
-    let branches: Vec<&str> = raw
-        .lines()
-        .filter(|l| !l.trim().is_empty())
-        .collect();
+    let branches: Vec<&str> = raw.lines().filter(|l| !l.trim().is_empty()).collect();
 
     if branches.is_empty() {
         return "[branches] none".into();
@@ -234,10 +236,7 @@ fn compress_branch(raw: &str) -> String {
 
 /// Compress `git tag` — list tags compactly.
 fn compress_tag(raw: &str) -> String {
-    let tags: Vec<&str> = raw
-        .lines()
-        .filter(|l| !l.trim().is_empty())
-        .collect();
+    let tags: Vec<&str> = raw.lines().filter(|l| !l.trim().is_empty()).collect();
 
     if tags.is_empty() {
         return "[tags] none".into();
@@ -303,9 +302,7 @@ fn compress_merge_like(sub: &str, raw: &str) -> String {
         .lines()
         .filter(|l| {
             let t = l.trim();
-            !t.is_empty()
-                && !t.starts_with("Auto-merging")
-                && !t.starts_with("Applying:")
+            !t.is_empty() && !t.starts_with("Auto-merging") && !t.starts_with("Applying:")
         })
         .collect();
 
@@ -328,19 +325,13 @@ fn compress_checkout(sub: &str, raw: &str) -> String {
         return format!("[git {sub}] ok");
     }
 
-    let first = raw
-        .lines()
-        .find(|l| !l.trim().is_empty())
-        .unwrap_or("ok");
+    let first = raw.lines().find(|l| !l.trim().is_empty()).unwrap_or("ok");
     format!("[git {sub}] {}", first.trim())
 }
 
 /// Compress `git remote -v` output.
 fn compress_remote(raw: &str) -> String {
-    let remotes: Vec<&str> = raw
-        .lines()
-        .filter(|l| l.contains("(fetch)"))
-        .collect();
+    let remotes: Vec<&str> = raw.lines().filter(|l| l.contains("(fetch)")).collect();
 
     if remotes.is_empty() {
         if raw.trim().is_empty() {
@@ -616,7 +607,8 @@ remote: Total 3 (delta 2), reused 3 (delta 2)
 
     #[test]
     fn test_commit_with_hash() {
-        let raw = "[main abc1234] Fix bug in parser\n 1 file changed, 2 insertions(+), 1 deletion(-)\n";
+        let raw =
+            "[main abc1234] Fix bug in parser\n 1 file changed, 2 insertions(+), 1 deletion(-)\n";
         let result = compress_write_op("commit", raw);
         assert!(result.starts_with("[git commit]"));
         assert!(result.contains("[main abc1234] Fix bug in parser"));
@@ -675,7 +667,8 @@ remote: Total 3 (delta 2), reused 3 (delta 2)
 
     #[test]
     fn test_stash_list() {
-        let raw = "stash@{0}: WIP on main: abc1234 Fix thing\nstash@{1}: WIP on dev: def5678 Other\n";
+        let raw =
+            "stash@{0}: WIP on main: abc1234 Fix thing\nstash@{1}: WIP on dev: def5678 Other\n";
         let result = compress_stash("stash", raw);
         assert!(result.contains("[stash: 2 entries]"));
         assert!(result.contains("stash@{0}"));
@@ -909,7 +902,10 @@ abc1234 (John 2024-01-01 10:00:00 +0100  3) }
     #[test]
     fn test_trait_dispatches_reset() {
         let c = GitCompressor;
-        let result = c.compress("Unstaged changes after reset:\nM\tsrc/main.rs\n", Some("reset"));
+        let result = c.compress(
+            "Unstaged changes after reset:\nM\tsrc/main.rs\n",
+            Some("reset"),
+        );
         assert!(result.contains("[git reset]"));
     }
 

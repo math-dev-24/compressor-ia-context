@@ -1,10 +1,10 @@
-pub mod truncate;
-pub mod git;
 pub mod cargo;
-pub mod grep;
-pub mod python;
 pub mod docker;
 pub mod generic;
+pub mod git;
+pub mod grep;
+pub mod python;
+pub mod truncate;
 
 /// Pure compression trait.
 /// Implementations transform raw command output into a compact form.
