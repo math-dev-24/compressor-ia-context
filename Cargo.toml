@@ -1,0 +1,25 @@
+[package]
+name = "cx-proxy"
+version = "0.1.0"
+edition = "2024"
+description = "CLI proxy that compresses shell outputs for AI context windows (Cursor, Claude, Copilot, …)"
+license = "MIT"
+repository = "https://github.com/user/cx-proxy"
+keywords = ["cli", "ai", "token", "compression", "proxy"]
+categories = ["command-line-utilities", "development-tools"]
+readme = "README.md"
+
+[[bin]]
+name = "cx"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.5.59", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+toml = "1.0.2"
+dirs = "6"
+
+[profile.release]
+lto = true
+strip = true
+codegen-units = 1

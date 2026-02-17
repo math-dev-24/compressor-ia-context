@@ -1,0 +1,26 @@
+---
+description: Rules for working with cx CLI commands
+globs: src/cli.rs, src/main.rs
+alwaysApply: false
+---
+
+# CLI Command Rules
+
+## Adding Commands
+
+When adding a new CLI command:
+
+1. Add the variant to `Commands` enum in `src/cli.rs` with doc comment and any aliases
+2. Add dispatch in `src/main.rs` `match` block
+3. Use `#[arg(trailing_var_arg = true)]` for commands that forward arguments
+4. Add appropriate aliases with `#[command(alias = "...")]`
+
+## Command Naming
+
+- Top-level commands match the tool name: `git`, `cargo`, `python`, `docker`
+- Utility commands: `ls`, `grep`, `run`, `info`, `init`
+- Aliases for convenience: `py`/`uv` → `python`
+
+## Config Integration
+
+Commands that need config values (like `ls`) should accept `&Config` in their constructor. Other commands use hardcoded defaults from `truncate.rs` for now.

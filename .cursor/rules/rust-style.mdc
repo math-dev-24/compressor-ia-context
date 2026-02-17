@@ -1,0 +1,36 @@
+---
+description: Rust coding style for cx-proxy
+globs: "**/*.rs"
+alwaysApply: true
+---
+
+# Rust Style Guide
+
+## General
+
+- Edition 2024, stable Rust only
+- Run `cargo clippy` before committing — zero warnings policy
+- Run `cargo test` — all tests must pass
+
+## Naming
+
+- Compressors: `FooCompressor` (e.g. `GitCompressor`, `CargoCompressor`)
+- Tools: `FooTool` (e.g. `GitTool`, `CargoTool`)
+- Compression functions: `compress_subcommand(raw: &str) -> String` (e.g. `compress_status`, `compress_diff`)
+
+## Error Handling
+
+- `runner::exec()` returns `Result<RunResult, String>` — tools handle errors with `format!("[label] error: {e}")`
+- Compressors never fail — they always return a `String` (worst case: truncated input)
+
+## Imports
+
+- Group: std → external crates → crate modules
+- Use `super::` for sibling module imports within compress/ or tools/
+- Use `crate::` for cross-layer imports (e.g. tool importing compressor)
+
+## Tests
+
+- Place tests in `#[cfg(test)] mod tests` at the bottom of each file
+- Test both happy path and edge cases (empty input, huge input, error output)
+- Use descriptive test names: `test_status_with_staged_files`, `test_diff_empty`

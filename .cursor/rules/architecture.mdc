@@ -1,0 +1,41 @@
+---
+description: Core architecture rules for cx-proxy
+globs: src/**/*.rs
+alwaysApply: true
+---
+
+# cx-proxy Architecture Rules
+
+## Two-Layer Separation
+
+This project strictly separates **compression** from **tool execution**:
+
+- `src/compress/` — Pure string transforms. NO I/O, NO process spawning, NO filesystem access.
+- `src/tools/` — Command building, process execution via `runner::exec()`, compression via the appropriate `Compressor`.
+
+**Never import `std::process`, `std::fs`, or `runner` inside `src/compress/`.**
+
+## Traits
+
+- `Compressor::compress(&self, raw: &str, sub: Option<&str>) -> String` — pure function
+- `Tool::run(&self) -> String` — executes command, returns compressed output with footer
+
+## Adding a New Command
+
+1. `src/compress/foo.rs` — implement `Compressor` + unit tests
+2. `src/tools/foo.rs` — implement `Tool`
+3. Register in `src/compress/mod.rs` and `src/tools/mod.rs`
+4. Add CLI subcommand in `src/cli.rs`
+5. Wire dispatch in `src/main.rs`
+
+## Smart Defaults
+
+Smart defaults (e.g. `--oneline` for `git log`) belong in the **tool layer**, not the compressor. The compressor receives already-formatted output.
+
+## Configuration
+
+Configurable values come from `Config` (loaded from `.cx.toml` / `~/.config/cx/config.toml`). Do not hardcode limits — use `Config` fields or the constants in `truncate.rs`.
+
+## Testing
+
+Every compressor MUST have `#[cfg(test)] mod tests` with comprehensive unit tests. Compressor tests are pure (no I/O mocking needed).
