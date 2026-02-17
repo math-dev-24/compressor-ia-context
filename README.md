@@ -101,6 +101,141 @@ FAIL test_login (tests/test_auth.py:23)
 12 passed, 1 failed
 ```
 
+## Usage with AI agents
+
+`cx` is designed to be used by AI coding agents. Below are ready-to-use rules/instructions for each platform.
+
+### Cursor
+
+Create `.cursor/rules/use-cx.mdc` in your project (or add as a global User Rule in Settings > Cursor Rules):
+
+```markdown
+---
+description: Use cx proxy for all shell commands to save context tokens
+globs:
+alwaysApply: true
+---
+
+# Use `cx` for shell commands
+
+Always use `cx` instead of raw shell commands. It compresses output to save tokens.
+
+| Instead of           | Use                        |
+|----------------------|----------------------------|
+| git status           | cx git status              |
+| git diff             | cx git diff                |
+| git log              | cx git log                 |
+| cargo build          | cx cargo build             |
+| cargo test           | cx cargo test              |
+| cargo clippy         | cx cargo clippy            |
+| pytest               | cx python pytest           |
+| ruff check .         | cx python ruff             |
+| mypy src/            | cx python mypy src/        |
+| pip install X        | cx python pip install X    |
+| uv sync              | cx python sync             |
+| docker ps            | cx docker ps               |
+| ls / tree            | cx ls                      |
+| grep -rn "pat" .     | cx grep "pat"              |
+| rg "pat"             | cx grep "pat" --rg         |
+| any other command    | cx run <command>           |
+
+Do NOT use cx for: interactive commands, file reading (cat/head), or file editing.
+Use `cx info` to check project detection. Use `cx ls` for directory structure.
+```
+
+### Claude (CLAUDE.md / system prompt)
+
+Add to your `CLAUDE.md` at the project root:
+
+```markdown
+## Shell commands
+
+This project uses `cx` as a shell proxy. Always run commands through `cx`:
+
+- `cx git status` instead of `git status`
+- `cx cargo test` instead of `cargo test`
+- `cx python pytest` instead of `pytest`
+- `cx docker ps` instead of `docker ps`
+- `cx ls` instead of `ls` or `tree`
+- `cx grep "pattern"` instead of `grep -rn "pattern" .`
+- `cx run <cmd>` for any other command
+
+`cx` compresses output (errors + summaries only) and adds smart defaults.
+Do not use `cx` for interactive commands or file reading.
+```
+
+### Claude Code (claude-code / project instructions)
+
+Add to your `.claude/project.md` or pass as `--system-prompt`:
+
+```markdown
+## Tool usage
+
+Use `cx` CLI proxy for all shell commands. It compresses output to save context.
+
+Examples:
+- Run tests: `cx cargo test` or `cx python pytest`
+- Check status: `cx git status`
+- View diff: `cx git diff`
+- Lint: `cx cargo clippy` or `cx python ruff`
+- List files: `cx ls`
+- Search: `cx grep "pattern" --rg`
+- Anything else: `cx run <command>`
+
+Never use raw git/cargo/pytest/docker commands directly.
+```
+
+### GitHub Copilot (workspace instructions)
+
+Add to `.github/copilot-instructions.md`:
+
+```markdown
+## Shell proxy
+
+Use `cx` for all shell commands. It compresses output for AI context efficiency.
+
+Command mapping:
+- git → cx git
+- cargo → cx cargo
+- pytest → cx python pytest
+- ruff → cx python ruff
+- docker → cx docker
+- ls/tree → cx ls
+- grep/rg → cx grep "pattern"
+- other → cx run <command>
+
+Smart defaults are applied automatically (e.g. cx git log adds --oneline -n30).
+```
+
+### Windsurf / Codeium
+
+Add to `.windsurfrules` at the project root:
+
+```
+Use `cx` CLI proxy for all shell commands to compress output and save context tokens.
+Mapping: git→cx git, cargo→cx cargo, pytest→cx python pytest, docker→cx docker, ls→cx ls, grep→cx grep.
+For any unsupported command: cx run <command>.
+Do not use cx for interactive commands or file reading.
+```
+
+### Aider
+
+Add to `.aider.conf.yml` or pass as `--system-prompt-extra`:
+
+```yaml
+system-prompt-extra: |
+  Use `cx` for all shell commands. It compresses output for AI context.
+  git status → cx git status
+  cargo test → cx cargo test
+  pytest → cx python pytest
+  docker ps → cx docker ps
+  ls → cx ls
+  grep → cx grep "pattern"
+  other → cx run <command>
+```
+
+---
+
 ## Configuration
 
 `cx` loads config with this priority:

@@ -1,0 +1,52 @@
+---
+description: Instruct Cursor agent to use cx proxy for all shell commands
+globs: 
+alwaysApply: true
+---
+
+# Use `cx` for all shell commands
+
+You have access to `cx`, a CLI proxy that compresses shell output to save context tokens. **Always prefer `cx` over raw commands.**
+
+## Command mapping
+
+Instead of:                    Use:
+─────────────────────────────────────────────────
+git status                  →  cx git status
+git diff                    →  cx git diff
+git log                     →  cx git log
+git push                    →  cx git push
+cargo build                 →  cx cargo build
+cargo test                  →  cx cargo test
+cargo clippy                →  cx cargo clippy
+cargo fmt --check           →  cx cargo fmt
+pytest                      →  cx python pytest
+ruff check .                →  cx python ruff
+mypy src/                   →  cx python mypy src/
+pip install -r req.txt      →  cx python pip install -r req.txt
+uv sync                     →  cx python sync
+docker ps                   →  cx docker ps
+docker logs <id>            →  cx docker logs <id>
+ls / tree                   →  cx ls
+grep -rn "pattern" .        →  cx grep "pattern"
+rg "pattern"                →  cx grep "pattern" --rg
+
+## Why
+
+- `cx` automatically adds smart defaults (e.g. `git log` gets `--oneline -n30`)
+- Output is compressed: errors and summaries only, no noise
+- Saves 5-20x tokens in your context window
+- Timing and exit code are appended automatically
+
+## When NOT to use cx
+
+- Interactive commands (e.g. `git rebase -i`, `vim`)
+- Commands where you need the full raw output (e.g. `cat file.rs`)
+- File editing (use editor tools instead)
+- Package install commands that need user confirmation
+
+## Utilities
+
+- `cx info` — show detected project type and active config
+- `cx init` — generate a `.cx.toml` config file for the project
+- `cx run <any command>` — fallback for any command not explicitly supported
